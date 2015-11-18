@@ -1,0 +1,963 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Whoops - I did the api wrong</title>
+<meta name="author" content="(Philipp Meier)"/>
+
+<link rel="stylesheet" href="./reveal.js/css/reveal.min.css"/>
+<link rel="stylesheet" href="./reveal.js/css/theme/simple.css" id="theme"/>
+<link rel="stylesheet" href="custom.css"/>
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = './reveal.js/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-1"  data-background="urkel.jpg" data-background-size="contain" data-background-transition="fade">
+
+<h2>Whoops - I did the api wrong</h2>
+<p>
+clojure/conj Philadelphia, PA 2015
+</p>
+
+
+
+<p>
+Philipp Meier &#x2013; <a href="mailto:philipp@meier.name">mailto:philipp@meier.name</a> &#x2013; @ordnungswprog
+</p>
+
+</section>
+<section id="sec-2" >
+
+<h2>Motivation for this talk</h2>
+</section>
+<section>
+<section id="sec-2-1"  data-background="liberator.svg" data-background-size="contain">
+
+<h3>Creator and Maintainer of liberator</h3>
+</section>
+</section>
+<section>
+<section id="sec-2-2" >
+
+<h3>Released to the public in 2009</h3>
+</section>
+<section id="sec-2-2-1" >
+
+<h4>320 commits for far</h4>
+<p class="fragment fade-in">
+you can create quite some mess
+</p>
+</section>
+</section>
+<section>
+<section id="sec-2-3" >
+
+<h3>People are really using it</h3>
+</section>
+</section>
+<section>
+<section id="sec-2-4" >
+
+<h3>Whoops, changing stuff might break other people's code</h3>
+</section>
+<section id="sec-2-4-1" >
+
+<h4>Users need to keep up with changes</h4>
+<p class="fragment fade-in">
+<img src="track-changes.gif" alt="track-changes.gif" /> _
+</p>
+
+<aside class="notes">
+<ul class="org-ul">
+<li>can can keep up with changing apis</li>
+<li>but it's a hassle</li>
+<li>silently upgrading your libs dependencies might break code</li>
+</ul>
+</aside>
+</section>
+</section>
+<section>
+<section id="sec-2-5"  data-background="magsafe.jpg">
+
+<h3>Changing the API <b>will</b> break other people's code</h3>
+</section>
+
+</section>
+<section>
+<section id="sec-2-6" >
+
+<h3>Oh no! Suffering from bad, early decisions</h3>
+<p class="fragment fade-in">
+<img src="open-prs.png" alt="open-prs.png" /> <img src="open-issues.png" alt="open-issues.png" />
+</p>
+
+<p class="fragment fade-in">
+That escalated quickly
+</p>
+</section>
+</section>
+<section id="sec-3" >
+
+<h2>Why is this bad?</h2>
+</section>
+<section>
+<section id="sec-3-1" >
+
+<h3>If you cannot change the interface then you cannot provide the best access to features</h3>
+</section>
+<section id="sec-3-1-1" >
+
+<h4>Users overlook features</h4>
+</section>
+<section id="sec-3-1-2"  data-background="invention.jpg">
+
+<h4>Users eventually reinvent features</h4>
+</section>
+</section>
+<section>
+<section id="sec-3-2" >
+
+<h3>Stimulates creativity in users</h3>
+</section>
+<section id="sec-3-2-1" >
+
+<h4>stimulating creativity is undesired</h4>
+</section>
+</section>
+<section>
+<section id="sec-3-3" >
+
+<h3>work arounds</h3>
+</section>
+<section id="sec-3-3-1" >
+
+<h4>workarounds are undocumented</h4>
+<ul class="org-ul">
+<li class="fragment fade-in">hidden knowledge
+</li>
+<li class="fragment fade-in">promote cargo culting
+</li>
+<li class="fragment fade-in">eventually they are obsolete&#x2026;
+</li>
+<li class="fragment fade-in">&#x2026;and increase the burden of backward compatibility
+</li>
+</ul>
+</section>
+</section>
+<section>
+<section id="sec-3-4" >
+
+<h3>wrapping</h3>
+<ul class="org-ul">
+<li class="fragment fade-in">"I like you library but not your api"
+</li>
+<li class="fragment fade-in">necessary to ease clojure access to java apis
+</li>
+<li class="fragment fade-in">new features not supported in wrapping layer
+</li>
+<li class="fragment fade-in">wrapping layer hides new features
+</li>
+</ul>
+</section>
+</section>
+<section>
+<section id="sec-3-5"  data-background="shoe-horn.jpg" data-background-transition="slide">
+
+<h3>shoe horning</h3>
+<aside class="notes">
+<ul class="org-ul">
+<li>abuse things</li>
+<li>making thigs fit with gentle violence</li>
+</ul>
+</aside>
+</section>
+</section>
+<section>
+<section id="sec-3-6"  data-background="square-peg-1.png" data-background-transition="fade">
+
+<h3>square pegging</h3>
+<aside class="notes">
+<ul class="org-ul">
+<li>making thigs fit with not so gentle violence</li>
+</ul>
+</aside>
+</section>
+<section id="sec-3-6-1"  data-background="square-peg-2.png" data-background-transition="fade">
+
+<h4>square pegging - it works</h4>
+</section>
+<section id="sec-3-6-2"  data-background="square-peg-3.png" data-background-transition="fade">
+
+<h4>you know that expression?</h4>
+</section>
+<section id="sec-3-6-3"  data-background="square-peg-3.png" data-background-transition="fade">
+
+<h4>they know that you are going to maintain this</h4>
+</section>
+</section>
+<section>
+<section id="sec-3-7" >
+
+<h3>Phantom bugs</h3>
+</section>
+<section id="sec-3-7-1" >
+
+<h4>API encourage simple mistakes which are hard to find</h4>
+</section>
+<section id="sec-3-7-2" >
+
+<h4>A case of miscommunication</h4>
+<ol class="org-ol"><li class="fragment none">Order 500m of cable<br/></li>
+<li class="fragment none">Receive 500ft of cable<br/></li>
+<li class="fragment none">Curses being exchanged between over the atlantic ocean<br/></li></ol>
+</section>
+</section>
+<section>
+<section id="sec-3-8" >
+
+<h3>Docstrings</h3>
+<h3 class="fragment fade-in" style="color: #cc2222">GREEN</h3>
+</section>
+
+</section>
+<section>
+<section id="sec-3-9" >
+
+<h3>Error handling</h3>
+</section>
+<section id="sec-3-9-1" >
+
+<h4>Use a dedicated error handling model</h4>
+<ul class="org-ul">
+<li class="fragment fade-in">exceptions
+</li>
+<li class="fragment fade-in">special return values
+</li>
+<li class="fragment fade-in">error state
+</li>
+</ul>
+
+</section>
+<section id="sec-3-9-2" >
+
+<h4>Whatever error model you choose</h4>
+<ul class="org-ul">
+<li class="fragment fade-in">document
+</li>
+<li class="fragment fade-in">be consistent
+</li>
+<li class="fragment fade-in">it's part of the API
+</li>
+</ul>
+</section>
+</section>
+<section id="sec-4" >
+
+<h2>Blush time</h2>
+</section>
+<section>
+<section id="sec-4-1" >
+
+<h3>Short sighted interface design in the wild</h3>
+</section>
+<section id="sec-4-1-1" >
+
+<h4>Staring&#x2026; my code</h4>
+</section>
+<section id="sec-4-1-2" >
+
+<h4>Guest appearance by other people's code</h4>
+</section>
+</section>
+<section>
+<section id="sec-4-2"  data-background="too-many-knobs.jpg" data-background-transition="fade">
+
+<h3>Too many knobs</h3>
+<p class="fragment fade-in">
+Liberator knobs
+<img src="liberator-knobs.png" alt="liberator-knobs.png" /> _
+</p>
+<aside class="notes">
+<p>
+You must guide your users
+</p>
+</aside>
+</section>
+<section id="sec-4-2-1" >
+
+<h4>Not so many docstrings&#x2026;</h4>
+<p>
+<img src="liberator-no-docs.png" alt="liberator-no-docs.png" /> _
+</p>
+</section>
+<section id="sec-4-2-2"  data-transition="none">
+
+<h4>Phantom bugs!</h4>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #859900;">defresource</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">frobnicator</span><span style="color: #586e75; font-style: italic;"> </span>[db<span style="color: #586e75; font-style: italic;"> </span>id]
+<span style="color: #586e75; font-style: italic;">  </span><span style="color: #268bd2; font-weight: bold;">:exists</span><span style="color: #586e75; font-style: italic;">           </span>(<span style="color: #859900;">fn</span><span style="color: #586e75; font-style: italic;"> </span>[ctx]<span style="color: #586e75; font-style: italic;"> </span>{<span style="color: #268bd2; font-weight: bold;">::frob</span><span style="color: #586e75; font-style: italic;"> </span>(load-from-db<span style="color: #586e75; font-style: italic;"> </span>db<span style="color: #586e75; font-style: italic;"> </span>id)})
+<span style="color: #586e75; font-style: italic;">  </span><span style="color: #268bd2; font-weight: bold;">:e-tag</span><span style="color: #586e75; font-style: italic;">            </span>(<span style="color: #859900;">fn</span><span style="color: #586e75; font-style: italic;"> </span>[{frob<span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">::frob</span>}]<span style="color: #586e75; font-style: italic;"> </span>(<span style="color: #268bd2; font-weight: bold;">:_version</span><span style="color: #586e75; font-style: italic;"> </span>frob))
+<span style="color: #586e75; font-style: italic;">  </span><span style="color: #268bd2; font-weight: bold;">:handle-not-found</span><span style="color: #586e75; font-style: italic;"> </span>(<span style="color: #859900;">fn</span><span style="color: #586e75; font-style: italic;"> </span>[ctx]<span style="color: #586e75; font-style: italic;"> </span>(format<span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"Frob</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">not</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">found</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">with</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">id</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">%s"</span><span style="color: #586e75; font-style: italic;"> </span>id))
+<span style="color: #586e75; font-style: italic;">  </span><span style="color: #268bd2; font-weight: bold;">:handle-ok</span><span style="color: #586e75; font-style: italic;">        </span>(<span style="color: #859900;">fn</span><span style="color: #586e75; font-style: italic;"> </span>[{frob<span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">::frob</span>}<span style="color: #586e75; font-style: italic;"> </span>frob]))
+</pre>
+</div>
+</section>
+<section id="sec-4-2-3"  data-transition="none">
+
+<h4>Phantom bugs!</h4>
+<div class="org-src-container">
+
+<pre  class="src src-clojure">(<span style="color: #859900;">defresource</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">frobnicator</span><span style="color: #586e75; font-style: italic;"> </span>[db<span style="color: #586e75; font-style: italic;"> </span>id]
+<span style="color: #586e75; font-style: italic;">  </span><span style="color: #268bd2; font-weight: bold;">:exists?</span><span style="color: #586e75; font-style: italic;">          </span>(<span style="color: #859900;">fn</span><span style="color: #586e75; font-style: italic;"> </span>[ctx]<span style="color: #586e75; font-style: italic;"> </span>{<span style="color: #268bd2; font-weight: bold;">::frob</span><span style="color: #586e75; font-style: italic;"> </span>(load-from-db<span style="color: #586e75; font-style: italic;"> </span>db<span style="color: #586e75; font-style: italic;"> </span>id)})
+<span style="color: #586e75; font-style: italic;">  </span><span style="color: #268bd2; font-weight: bold;">:e-tag</span><span style="color: #586e75; font-style: italic;">            </span>(<span style="color: #859900;">fn</span><span style="color: #586e75; font-style: italic;"> </span>[{frob<span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">::frob</span>}]<span style="color: #586e75; font-style: italic;"> </span>(<span style="color: #268bd2; font-weight: bold;">:_version</span><span style="color: #586e75; font-style: italic;"> </span>frob))
+<span style="color: #586e75; font-style: italic;">  </span><span style="color: #268bd2; font-weight: bold;">:handle-not-found</span><span style="color: #586e75; font-style: italic;"> </span>(<span style="color: #859900;">fn</span><span style="color: #586e75; font-style: italic;"> </span>[ctx]<span style="color: #586e75; font-style: italic;"> </span>(format<span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"Frob</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">not</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">found</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">with</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">id</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">%s"</span><span style="color: #586e75; font-style: italic;"> </span>id))
+<span style="color: #586e75; font-style: italic;">  </span><span style="color: #268bd2; font-weight: bold;">:handle-ok</span><span style="color: #586e75; font-style: italic;">        </span>(<span style="color: #859900;">fn</span><span style="color: #586e75; font-style: italic;"> </span>[{frob<span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">::frob</span>}<span style="color: #586e75; font-style: italic;"> </span>frob]))
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="sec-4-3" >
+
+<h3>Incomposability</h3>
+</section>
+</section>
+<section>
+<section id="sec-4-4"  data-background="lego.gif" data-background-transition="fade">
+
+<h3>Lego composes</h3>
+</section>
+</section>
+<section>
+<section id="sec-4-5" >
+
+<h3>Variadic map arguments</h3>
+<p class="fragment fade-in">
+&#x2026;do not compose too well
+</p>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">defn</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">load-entity</span><span style="color: #586e75; font-style: italic;"> </span>[db<span style="color: #586e75; font-style: italic;"> </span>&amp;<span style="color: #586e75; font-style: italic;"> </span>{<span style="color: #268bd2; font-weight: bold;">:as</span><span style="color: #586e75; font-style: italic;"> </span>opts}]<span style="color: #586e75; font-style: italic;"> </span>...)
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">def</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">default-opts</span><span style="color: #586e75; font-style: italic;"> </span>{<span style="color: #268bd2; font-weight: bold;">:eager</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">true</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:keywordize</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">false</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:fetch-depth</span><span style="color: #586e75; font-style: italic;"> </span>5})
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">defn</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">load-customer</span><span style="color: #586e75; font-style: italic;"> </span>[db<span style="color: #586e75; font-style: italic;"> </span>id]
+<span style="color: #586e75; font-style: italic;">  </span>(apply<span style="color: #586e75; font-style: italic;"> </span>load-entity<span style="color: #586e75; font-style: italic;"> </span>db<span style="color: #586e75; font-style: italic;"> </span>(merge<span style="color: #586e75; font-style: italic;"> </span>default-ops<span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:query</span><span style="color: #586e75; font-style: italic;"> </span>{<span style="color: #268bd2; font-weight: bold;">:id</span><span style="color: #586e75; font-style: italic;"> </span>id}))
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">;; =&gt; IllegalArgumentException No value supplied for key: [:fetch-depth 5]  clojure.lang.PersistentHashMap.create (PersistentHashMap.java:77)
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(apply<span style="color: #586e75; font-style: italic;"> </span>load-entity<span style="color: #586e75; font-style: italic;"> </span>my-db<span style="color: #586e75; font-style: italic;"> </span>(apply<span style="color: #586e75; font-style: italic;"> </span>concat<span style="color: #586e75; font-style: italic;"> </span>(merge<span style="color: #586e75; font-style: italic;"> </span>default-ops<span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:query</span><span style="color: #586e75; font-style: italic;"> </span>{<span style="color: #268bd2; font-weight: bold;">:id</span><span style="color: #586e75; font-style: italic;"> </span>id}))
+</pre>
+</div>
+</section>
+<section id="sec-4-5-1" >
+
+<h4>Apply concat apply function?</h4>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">-&gt;&gt;</span><span style="color: #586e75; font-style: italic;"> </span>some-opts<span style="color: #586e75; font-style: italic;"> </span>(apply<span style="color: #586e75; font-style: italic;"> </span>concat)<span style="color: #586e75; font-style: italic;"> </span>(apply<span style="color: #586e75; font-style: italic;"> </span>load-entitiy))
+</pre>
+</div>
+
+<p class="fragment fade-in">
+<img src="kidding.png" alt="kidding.png" /> _
+</p>
+</section>
+
+</section>
+<section>
+<section id="sec-4-6"  data-background="trapdoor.jpg" data-background-transition="slide">
+
+<h3>Macros</h3>
+</section>
+<section id="sec-4-6-1"  data-background="trapdoor.jpg" data-background-transition="slide">
+
+<h4>Once you're in macro-land you need stay in macro-land</h4>
+</section>
+<section id="sec-4-6-2" >
+
+<h4>macro-apply anyone?</h4>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">defresource</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">foo</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:handle-ok</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"ok"</span>)
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">def</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">defaults</span><span style="color: #586e75; font-style: italic;"> </span>{<span style="color: #268bd2; font-weight: bold;">:exists?</span><span style="color: #586e75; font-style: italic;"> </span>(<span style="color: #859900;">fn</span><span style="color: #586e75; font-style: italic;"> </span>[_]<span style="color: #586e75; font-style: italic;"> </span>(zero?<span style="color: #586e75; font-style: italic;"> </span>(rand-int<span style="color: #586e75; font-style: italic;"> </span>1)))})
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(apply<span style="color: #586e75; font-style: italic;"> </span>defresource<span style="color: #586e75; font-style: italic;"> </span>bar<span style="color: #586e75; font-style: italic;"> </span>(merge<span style="color: #586e75; font-style: italic;"> </span>defaults<span style="color: #586e75; font-style: italic;"> </span>{<span style="color: #268bd2; font-weight: bold;">:handle-ok</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"ok"</span>}))
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in"><span style="color: #d33682; font-style: italic;">;;</span><span style="color: #d33682; font-style: italic;"> </span><span style="color: #d33682;">=&gt;</span><span style="color: #d33682; font-style: italic;"> </span><span style="color: #d33682;">CompilerException</span><span style="color: #d33682; font-style: italic;"> </span><span style="color: #d33682;">java.lang.RuntimeException:</span><span style="color: #d33682; font-style: italic;"> </span><span style="color: #d33682;">Can't</span><span style="color: #d33682; font-style: italic;"> </span><span style="color: #d33682;">take</span><span style="color: #d33682; font-style: italic;"> </span><span style="color: #d33682;">value</span><span style="color: #d33682; font-style: italic;"> </span><span style="color: #d33682;">of</span><span style="color: #d33682; font-style: italic;"> </span><span style="color: #d33682;">a</span><span style="color: #d33682; font-style: italic;"> </span><span style="color: #d33682;">macro:</span><span style="color: #d33682; font-style: italic;"> </span><span style="color: #d33682;">#'liberator.core/defresource,</span><span style="color: #d33682; font-style: italic;"> </span><span style="color: #d33682;">compiling:(/private/var/folders/p1/47jm9vq12g93ry9vf525h7vh0000gn/T/form-init2406362871536982238.clj:1:1)</span>
+</pre>
+</div>
+</section>
+<section id="sec-4-6-3" >
+
+<h4>prevents reuse &amp; promotes code duplication</h4>
+</section>
+<section id="sec-4-6-4" >
+
+<h4>liberator had to extend the api</h4>
+<p class="fragment fade-in">
+find backward compatible way
+</p>
+<p class="fragment fade-in">
+optional map as first argument
+</p>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">defresource</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">bar</span><span style="color: #586e75; font-style: italic;"> </span>defaults<span style="color: #586e75; font-style: italic;"> </span>{<span style="color: #268bd2; font-weight: bold;">:handle-ok</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"ok"</span>})
+</pre>
+</div>
+<p class="fragment fade-in">
+better stay away from macros
+</p>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">def</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">bar</span><span style="color: #586e75; font-style: italic;"> </span>(resource<span style="color: #586e75; font-style: italic;"> </span>defaults<span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:handle-ok</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"ok"</span>))
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">def</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">bar</span><span style="color: #586e75; font-style: italic;"> </span>(resource<span style="color: #586e75; font-style: italic;"> </span>(merge<span style="color: #586e75; font-style: italic;"> </span>defaults<span style="color: #586e75; font-style: italic;"> </span>{<span style="color: #268bd2; font-weight: bold;">:handle-ok</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"ok"</span>}))
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="sec-4-7" >
+
+<h3>Incomplete API</h3>
+</section>
+<section id="sec-4-7-1" >
+
+<h4>Unhandled edge cases&#x2026;</h4>
+</section>
+<section id="sec-4-7-2" >
+
+<h4>&#x2026;lead to workarounds</h4>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">fn</span><span style="color: #586e75; font-style: italic;"> </span>[ctx]
+<span style="color: #586e75; font-style: italic;"> </span>(ring-response<span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"response-body"</span><span style="color: #586e75; font-style: italic;"> </span>{<span style="color: #268bd2; font-weight: bold;">:headers</span><span style="color: #586e75; font-style: italic;"> </span>{<span style="color: #2aa198;">"X-Foo"</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"bar"</span>}))))
+</pre>
+</div>
+
+<p class="fragment fade-in">
+But this is what you need to do
+</p>
+
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">fn</span><span style="color: #586e75; font-style: italic;"> </span>[ctx]
+<span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75; font-style: italic;">;;</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">workaround</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">until</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">issue</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">#152</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">is</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">fixed</span>
+<span style="color: #586e75; font-style: italic;"> </span>(<span style="color: #859900;">-&gt;</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"response-body"</span>
+<span style="color: #586e75; font-style: italic;">     </span>(as-response<span style="color: #586e75; font-style: italic;"> </span>(assoc-in<span style="color: #586e75; font-style: italic;"> </span>ctx<span style="color: #586e75; font-style: italic;"> </span>[<span style="color: #268bd2; font-weight: bold;">:representation</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:media-type</span>]<span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"text/plain"</span>))
+<span style="color: #586e75; font-style: italic;">     </span>(assoc-in<span style="color: #586e75; font-style: italic;"> </span>[<span style="color: #268bd2; font-weight: bold;">:headers</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"X-Foo"</span>]<span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"bar"</span>)
+<span style="color: #586e75; font-style: italic;">     </span>(ring-response))))
+</pre>
+</div>
+</section>
+<section id="sec-4-7-3" >
+
+<h4>Clojure users expect nil punning</h4>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">defn</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">print-my-stuff</span><span style="color: #586e75; font-style: italic;"> </span>[stuff]
+<span style="color: #586e75; font-style: italic;">  </span>(println<span style="color: #586e75; font-style: italic;"> </span>(str<span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"Stuff:</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"</span><span style="color: #586e75; font-style: italic;"> </span>(<span style="color: #268bd2;">.toString</span><span style="color: #586e75; font-style: italic;"> </span>stuff))
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">;; =&gt; NullPointerException   clojure.lang.Reflector.invokeNoArgInstanceMember (Reflector.java:301)
+</pre>
+</div>
+
+<p class="fragment fade-in">
+Reflector.java?
+</p>
+
+</section>
+<section id="sec-4-7-4" >
+
+<h4>Missing error handling</h4>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">500 INTERNAL SERVER ERROR
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in"><span style="color: #586e75; font-style: italic;">;;</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">since</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">0.12.0</span>
+(<span style="color: #859900;">defresource</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">foo</span>
+<span style="color: #586e75; font-style: italic;">  </span><span style="color: #268bd2; font-weight: bold;">:handle-exception</span><span style="color: #586e75; font-style: italic;"> </span>(<span style="color: #859900;">fn</span><span style="color: #586e75; font-style: italic;"> </span>[{e<span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:exception</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:as</span><span style="color: #586e75; font-style: italic;"> </span>context}]
+<span style="color: #cb4b16; font-weight: bold;">                </span><span style="color: #586e75; font-style: italic;">      </span>...)<span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75; font-style: italic;">;;</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">hurray</span>
+<span style="color: #586e75; font-style: italic;">  </span>...)
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="sec-4-8" >
+
+<h3>State</h3>
+<p class="fragment fade-in">
+State
+</p>
+
+<p class="fragment fade-in">
+State?
+</p>
+
+<p class="fragment fade-in">
+State!
+</p>
+<aside class="notes">
+<p>
+State is part of the API
+</p>
+</aside>
+</section>
+<section id="sec-4-8-1"  data-background="full-of-stars.jpg">
+
+<h4>My God, it's full of atoms</h4>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">def</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">system-state</span><span style="color: #586e75; font-style: italic;"> </span>(atom<span style="color: #586e75; font-style: italic;"> </span>{})
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">def</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">another-state</span><span style="color: #586e75; font-style: italic;"> </span>(atom<span style="color: #586e75; font-style: italic;"> </span>{})
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">def</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">auxiliary-state</span><span style="color: #586e75; font-style: italic;"> </span>(atom<span style="color: #586e75; font-style: italic;"> </span>{})
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">def</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">state-manager-state</span><span style="color: #586e75; font-style: italic;"> </span>(atom<span style="color: #586e75; font-style: italic;"> </span>{})
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">def</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">yetanother-state</span><span style="color: #586e75; font-style: italic;"> </span>(atom<span style="color: #586e75; font-style: italic;"> </span>{})
+</pre>
+</div>
+</section>
+<section id="sec-4-8-2" >
+
+<h4>Problems with too many atoms</h4>
+<ul class="org-ul">
+<li class="fragment fade-in">No coordination between atoms
+</li>
+<li class="fragment fade-in">Functions no longer referentially transparent
+</li>
+<li class="fragment fade-in">Functions expect "initialization"
+</li>
+</ul>
+</section>
+<section id="sec-4-8-3" >
+
+<h4>Use Explicit arguments</h4>
+</section>
+<section id="sec-4-8-4" >
+
+<h4>Use single atom to hold all the system state</h4>
+</section>
+<section id="sec-4-8-5" >
+
+<h4>Pass the value, not the atom to functions</h4>
+</section>
+<section id="sec-4-8-6" >
+
+<h4>Example</h4>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">def</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">state</span><span style="color: #586e75; font-style: italic;"> </span>(atom<span style="color: #586e75; font-style: italic;"> </span>{<span style="color: #268bd2; font-weight: bold;">:system-state</span><span style="color: #586e75; font-style: italic;"> </span>{}
+<span style="color: #cb4b16; font-weight: bold;">                </span><span style="color: #586e75; font-style: italic;">  </span><span style="color: #268bd2; font-weight: bold;">:another-state</span><span style="color: #586e75; font-style: italic;"> </span>{}
+<span style="color: #cb4b16; font-weight: bold;">                </span><span style="color: #586e75; font-style: italic;">  </span><span style="color: #268bd2; font-weight: bold;">:auxiliary-state</span><span style="color: #586e75; font-style: italic;"> </span>{}
+<span style="color: #cb4b16; font-weight: bold;">                </span><span style="color: #586e75; font-style: italic;">  </span><span style="color: #268bd2; font-weight: bold;">:yetanother-state</span><span style="color: #586e75; font-style: italic;"> </span>{}})
+</pre>
+</div>
+<p class="fragment fade-in">
+*-in is your friend
+</p>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">defn</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">start-ingest</span><span style="color: #586e75; font-style: italic;"> </span>[state<span style="color: #586e75; font-style: italic;"> </span>file]
+<span style="color: #586e75; font-style: italic;">  </span>(start-ingest-in-background<span style="color: #586e75; font-style: italic;"> </span>file)
+<span style="color: #586e75; font-style: italic;">  </span>(assoc-in<span style="color: #586e75; font-style: italic;"> </span>state<span style="color: #586e75; font-style: italic;"> </span>[<span style="color: #268bd2; font-weight: bold;">:system-state</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:ingest</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:status</span>]<span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:running</span>))
+
+(swap!<span style="color: #586e75; font-style: italic;"> </span>state<span style="color: #586e75; font-style: italic;"> </span>start-ingest<span style="color: #586e75; font-style: italic;"> </span>file)
+</pre>
+</div>
+
+<ul class="org-ul">
+<li class="fragment fade-in">Easier to test
+</li>
+<li class="fragment fade-in">Can use multiple instances
+</li>
+</ul>
+
+</section>
+<section id="sec-4-8-7" >
+
+<h4>Or use dynamic binding</h4>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">def</span><span style="color: #586e75; font-style: italic;"> </span>^<span style="color: #268bd2; font-weight: bold;">:dynamic</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">db</span>)
+
+(with-db<span style="color: #586e75; font-style: italic;"> </span>(connect<span style="color: #586e75; font-style: italic;"> </span>some-url)
+<span style="color: #586e75; font-style: italic;">  </span>(fetch-from-db<span style="color: #586e75; font-style: italic;"> </span>some-db))
+</pre>
+</div>
+</section>
+<section id="sec-4-8-8" >
+
+<h4>Nice to avoid endless passing of handles</h4>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">defn</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">exec</span><span style="color: #586e75; font-style: italic;"> </span>[db<span style="color: #586e75; font-style: italic;"> </span>query]<span style="color: #586e75; font-style: italic;"> </span>...)
+(<span style="color: #859900;">defn</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">fetch</span><span style="color: #586e75; font-style: italic;"> </span>[db<span style="color: #586e75; font-style: italic;"> </span>entity<span style="color: #586e75; font-style: italic;"> </span>id]
+<span style="color: #586e75; font-style: italic;">  </span>(exec<span style="color: #586e75; font-style: italic;"> </span>db<span style="color: #586e75; font-style: italic;"> </span>(build-query<span style="color: #586e75; font-style: italic;"> </span>entity<span style="color: #586e75; font-style: italic;"> </span>id)))
+(<span style="color: #859900;">defn</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">load-user</span><span style="color: #586e75; font-style: italic;"> </span>[db<span style="color: #586e75; font-style: italic;"> </span>id]
+<span style="color: #586e75; font-style: italic;">  </span>(fetch<span style="color: #586e75; font-style: italic;"> </span>db<span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:user</span><span style="color: #586e75; font-style: italic;"> </span>id))
+(<span style="color: #859900;">defn</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">authorized?</span><span style="color: #586e75; font-style: italic;"> </span>[db<span style="color: #586e75; font-style: italic;"> </span>id<span style="color: #586e75; font-style: italic;"> </span>role]
+<span style="color: #586e75; font-style: italic;">  </span>(<span style="color: #859900;">let</span><span style="color: #586e75; font-style: italic;"> </span>[user<span style="color: #586e75; font-style: italic;"> </span>(load-user<span style="color: #586e75; font-style: italic;"> </span>db<span style="color: #586e75; font-style: italic;"> </span>id)]
+<span style="color: #586e75; font-style: italic;">    </span>...))
+</pre>
+</div>
+</section>
+<section id="sec-4-8-9" >
+
+<h4>But what if you want to connect to more than one db?</h4>
+<aside class="notes">
+<p>
+You cannot bind a dynamic var to two values
+</p>
+</aside>
+</section>
+</section>
+<section id="sec-5" >
+
+<h2>Fixing it</h2>
+<aside class="notes">
+<p>
+I want to talk about fixing all this on a more general level
+</p>
+</aside>
+</section>
+<section>
+<section id="sec-5-1" >
+
+<h3>Out of band documentation</h3>
+<aside class="notes">
+<p>
+Not function docstrings
+</p>
+</aside>
+</section>
+<section id="sec-5-1-1" >
+
+<h4>Explain the design motivation</h4>
+</section>
+<section id="sec-5-1-2" >
+
+<h4>Explain the model and abstractions</h4>
+</section>
+<section id="sec-5-1-3" >
+
+<h4><span class="todo TODO">TODO</span> Liberator uses the ring interface</h4>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in"><span style="color: #586e75; font-style: italic;">;;</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">request</span>
+{<span style="color: #268bd2; font-weight: bold;">:request-method</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:get</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:headers</span><span style="color: #586e75; font-style: italic;"> </span>{...}}
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="fragment fade-in"><span style="color: #586e75; font-style: italic;">;;</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">response</span>
+{<span style="color: #268bd2; font-weight: bold;">:status</span><span style="color: #586e75; font-style: italic;"> </span>418<span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:body</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"I'm</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">a</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">teapot"</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:headers</span><span style="color: #586e75; font-style: italic;"> </span>{...}}
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="fragment fade-in"><span style="color: #586e75; font-style: italic;">;;</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">request</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">handler</span>
+(<span style="color: #859900;">fn</span><span style="color: #586e75; font-style: italic;"> </span>[req]
+<span style="color: #586e75; font-style: italic;">  </span>{<span style="color: #268bd2; font-weight: bold;">:status</span><span style="color: #586e75; font-style: italic;"> </span>418<span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:body</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"I'm</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">a</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">teapot"</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:headers</span><span style="color: #586e75; font-style: italic;"> </span>{...}})
+</pre>
+</div>
+</section>
+<section id="sec-5-1-4" >
+
+<h4>Liberator holds state in the context</h4>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in"><span style="color: #586e75; font-style: italic;">;;</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">this</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">is</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">passed</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">as</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">the</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">context</span>
+{<span style="color: #268bd2; font-weight: bold;">:status</span><span style="color: #586e75; font-style: italic;"> </span>...
+<span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:request</span><span style="color: #586e75; font-style: italic;"> </span>...
+<span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:representation</span><span style="color: #586e75; font-style: italic;"> </span>...
+<span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:resource</span><span style="color: #586e75; font-style: italic;"> </span>...
+<span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:whatever-you-want</span><span style="color: #586e75; font-style: italic;"> </span>...}
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="fragment fade-in"><span style="color: #586e75; font-style: italic;">;;</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">every</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">decision</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">function</span>
+(<span style="color: #859900;">fn</span><span style="color: #586e75; font-style: italic;"> </span>[ctx]
+<span style="color: #586e75; font-style: italic;">  </span>(do-something)
+<span style="color: #586e75; font-style: italic;">  </span>{<span style="color: #268bd2; font-weight: bold;">:foo</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"some</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">value"</span>}<span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75; font-style: italic;">;;</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">context</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">update</span>
+<span style="color: #586e75; font-style: italic;">;;</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">context</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">is</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">"merged"</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">with</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">context</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #586e75;">update</span>
+</pre>
+</div>
+</section>
+<section id="sec-5-1-5"  data-background="context-doc.png" data-background-size="contain" data-background-transition="fade">
+
+<h4>This is actually documented!</h4>
+<p class="fragment fade-in">
+(Insert applause jingle here)
+</p>
+</section>
+<section id="sec-5-1-6" >
+
+<h4>Liberator provides a high level view on what's going on</h4>
+<p class="fragment fade-in">
+<img src="decision-graph.png" alt="decision-graph.png" /> _
+</p>
+
+</section>
+<section id="sec-5-1-7" >
+
+<h4>Protocols</h4>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">defprotocol</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #b58900;">Resource</span>
+<span style="color: #586e75; font-style: italic;">  </span>(exists?<span style="color: #586e75; font-style: italic;"> </span>[ctx]<span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"returns</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">true</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">when</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">the</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">resource</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">currently</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">exists"</span>)
+<span style="color: #586e75; font-style: italic;">  </span>(existed?<span style="color: #586e75; font-style: italic;"> </span>[ctx]<span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"returns</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">true</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">when</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">the</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">resoues</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">previosly</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">existed"</span>)
+<span style="color: #586e75; font-style: italic;">  </span>(handle-ok<span style="color: #586e75; font-style: italic;"> </span>[ctx]<span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"returns</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">the</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">representation</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">of</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">resource</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">entity"</span>)
+<span style="color: #586e75; font-style: italic;">  </span>...)
+</pre>
+</div>
+
+</section>
+<section id="sec-5-1-8" >
+
+<h4>Microprotocols</h4>
+<p class="fragment fade-in">
+Yada
+</p>
+<div class="org-src-container">
+
+<pre  class="fragment fade-in">(<span style="color: #859900;">defrecord</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #b58900;">StringResource</span><span style="color: #586e75; font-style: italic;"> </span>[s<span style="color: #586e75; font-style: italic;"> </span>last-modified]
+<span style="color: #586e75; font-style: italic;">  </span><span style="color: #b58900;">Representations</span>
+<span style="color: #586e75; font-style: italic;">  </span>(representations<span style="color: #586e75; font-style: italic;"> </span>[_]
+<span style="color: #586e75; font-style: italic;">    </span>[{<span style="color: #268bd2; font-weight: bold;">:media-type</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">"text/plain"</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2; font-weight: bold;">:charset</span><span style="color: #586e75; font-style: italic;"> </span>platform-charsets}])
+
+<span style="color: #586e75; font-style: italic;">  </span><span style="color: #b58900;">ResourceModification</span>
+<span style="color: #586e75; font-style: italic;">  </span>(last-modified<span style="color: #586e75; font-style: italic;"> </span>[_<span style="color: #586e75; font-style: italic;"> </span>_]<span style="color: #586e75; font-style: italic;"> </span>last-modified)
+
+<span style="color: #586e75; font-style: italic;">  </span><span style="color: #b58900;">ResourceVersion</span>
+<span style="color: #586e75; font-style: italic;">  </span>(version<span style="color: #586e75; font-style: italic;"> </span>[_<span style="color: #586e75; font-style: italic;"> </span>_]<span style="color: #586e75; font-style: italic;"> </span>s)
+
+<span style="color: #586e75; font-style: italic;">  </span><span style="color: #b58900;">Get</span>
+<span style="color: #586e75; font-style: italic;">  </span>(<span style="color: #268bd2; font-weight: bold;">GET</span><span style="color: #586e75; font-style: italic;"> </span>[_<span style="color: #586e75; font-style: italic;"> </span>_]<span style="color: #586e75; font-style: italic;"> </span>s))
+</pre>
+</div>
+<p class="fragment fade-in">
+om-next does this
+</p>
+</section>
+
+</section>
+<section id="sec-6" >
+
+<h2>Wrapping it up</h2>
+</section>
+<section>
+<section id="sec-6-1" >
+
+<h3>API Design is about the users</h3>
+</section>
+</section>
+<section>
+<section id="sec-6-2" >
+
+<h3>Plan ahead</h3>
+</section>
+</section>
+<section>
+<section id="sec-6-3" >
+
+<h3>Find the right abstraction</h3>
+</section>
+</section>
+<section>
+<section id="sec-6-4" >
+
+<h3>con•ven•ience (kən-vēnˈyəns)</h3>
+</section>
+<section id="sec-6-4-1" >
+
+<h4>or expressiveness?</h4>
+</section>
+</section>
+<section>
+<section id="sec-6-5" >
+
+<h3>Forget everything</h3>
+</section>
+<section id="sec-6-5-1" >
+
+<h4>take the users perspective</h4>
+</section>
+<section id="sec-6-5-2" >
+
+<h4>assume nothing</h4>
+</section>
+<section id="sec-6-5-3" >
+
+<h4>how far do you get only reading docstring</h4>
+<aside class="notes">
+<p>
+nice experiment
+take the users perspective
+</p>
+</aside>
+</section>
+</section>
+<section>
+<section id="sec-6-6" >
+
+<h3>Observer the users</h3>
+</section>
+<section id="sec-6-6-1" >
+
+<h4>How are they using your library</h4>
+</section>
+<section id="sec-6-6-2" >
+
+<h4>Search on github</h4>
+</section>
+<section id="sec-6-6-3" >
+
+<h4>Ask for context and motivation on bug reports</h4>
+<aside class="notes">
+<p>
+WORKSASDESIGNED - learn why a use wants this
+</p>
+</aside>
+</section>
+</section>
+<section id="sec-7" >
+
+<h2>Thank you!</h2>
+</section>
+<section id="sec-8" >
+
+<h2>Final words</h2>
+</section>
+<section>
+<section id="sec-8-1" >
+
+<h3>Talk is licensed [CC BY-SA 3.0 (<a href="http://creativecommons.org/licenses/by-sa/3.0">http://creativecommons.org/licenses/by-sa/3.0</a>)]</h3>
+</section>
+</section>
+<section>
+<section id="sec-8-2" >
+
+<h3>Attribution of pictures</h3>
+<div class="org-src-container">
+
+<pre  class="src src-text">Trapdoor: English Lock at en.wikipedia [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0)], from Wikimedia
+Commons https://upload.wikimedia.org/wikipedia/commons/f/fb/Trapdoor.jpg
+</pre>
+</div>
+</section>
+</section>
+</div>
+</div>
+
+<script src="./reveal.js/lib/js/head.min.js"></script>
+<script src="./reveal.js/js/reveal.min.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: false,
+progress: true,
+history: true,
+center: true,
+slideNumber: true,
+rollingLinks: false,
+keyboard: true,
+overview: true,
+margin: 0.00,
+minScale: 0.50,
+maxScale: 10.00,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: './reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: './reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: './reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: './reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+ { src: './reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: './reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+]
+});
+</script>
+</body>
+</html>

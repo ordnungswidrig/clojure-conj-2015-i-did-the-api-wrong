@@ -1,0 +1,524 @@
+#+OPTIONS: num:t toc:nil reveal_history:t reveal_title_slide:nil reveal_control:nil
+#+REVEAL_HLEVEL: 2
+#+REVEAL_TRANS: linear
+#+REVEAL_THEME: simple
+#+REVEAL_MARGIN: 0
+#+REVEAL_MIN_SCALE: 0.5
+#+REVEAL_MAX_SCALE: 10
+#+REVEAL_EXTRA_CSS: custom.css
+#+TITLE: Whoops - I did the api wrong
+* Whoops - I did the api wrong
+  :PROPERTIES: 
+  :reveal_background: urkel.jpg
+  :reveal_background_trans: fade
+  :reveal_background_size: contain
+  :END:
+  clojure/conj Philadelphia, PA 2015
+ 
+
+
+  Philipp Meier -- [[mailto:philipp@meier.name]] -- @ordnungswprog
+
+* Motivation for this talk
+** Creator and Maintainer of liberator
+  :PROPERTIES: 
+  :reveal_background: liberator.svg
+  :reveal_background_size: contain
+  :END:
+** Released to the public in 2009
+*** 320 commits for far
+    #+ATTR_REVEAL: :frag fade-in
+    you can create quite some mess
+** People are really using it
+** Whoops, changing stuff might break other people's code
+*** Users need to keep up with changes
+   #+ATTR_REVEAL: :frag fade-in
+   [[file:track-changes.gif]] _
+   
+   #+BEGIN_NOTES
+   - can can keep up with changing apis
+   - but it's a hassle
+   - silently upgrading your libs dependencies might break code
+   #+END_NOTES
+** Changing the API *will* break other people's code
+   :PROPERTIES: 
+   :reveal_background: magsafe.jpg
+   :END:
+
+** Oh no! Suffering from bad, early decisions 
+   #+ATTR_REVEAL: :frag fade-in
+   [[file:open-prs.png]] [[file:open-issues.png]]
+
+   #+ATTR_REVEAL: :frag fade-in
+   That escalated quickly
+* Why is this bad?
+** If you cannot change the interface then you cannot provide the best access to features
+*** Users overlook features 
+*** Users eventually reinvent features
+  :PROPERTIES: 
+  :reveal_background: invention.jpg
+  :xreveal_background_trans: slide
+  :END:
+** Stimulates creativity in users
+*** stimulating creativity is undesired
+** work arounds
+*** workarounds are undocumented
+    #+ATTR_REVEAL: :frag fade-in
+    - hidden knowledge
+    - promote cargo culting
+    - eventually they are obsolete...
+    - ...and increase the burden of backward compatibility
+** wrapping
+    #+ATTR_REVEAL: :frag fade-in
+    - "I like you library but not your api"
+    - necessary to ease clojure access to java apis
+    - new features not supported in wrapping layer
+    - wrapping layer hides new features
+** shoe horning
+    :PROPERTIES: 
+    :reveal_background: shoe-horn.jpg
+    :reveal_background_trans: slide
+    :END:
+    #+BEGIN_NOTES
+    - abuse things
+    - making thigs fit with gentle violence
+    #+END_NOTES
+** square pegging
+  :PROPERTIES: 
+  :reveal_background: square-peg-1.png
+  :reveal_background_trans: fade
+  :END:
+    #+BEGIN_NOTES
+    - making thigs fit with not so gentle violence
+    #+END_NOTES
+*** square pegging - it works
+  :PROPERTIES: 
+  :reveal_background: square-peg-2.png
+  :reveal_background_trans: fade
+  :END:
+*** you know that expression?
+  :PROPERTIES: 
+  :reveal_background: square-peg-3.png
+  :reveal_background_trans: fade
+  :END:
+*** they know that you are going to maintain this
+  :PROPERTIES: 
+  :reveal_background: square-peg-3.png
+  :reveal_background_trans: fade
+  :END:
+** Phantom bugs
+*** API encourage simple mistakes which are hard to find
+*** A case of miscommunication
+    #+ATTR_REVEAL: :frag fade-in
+**** Order 500m of cable
+**** Receive 500ft of cable
+**** Curses being exchanged between over the atlantic ocean
+** Docstrings
+   #+ATTR_REVEAL: :frag fade-in
+   #+REVEAL_HTML: <h3 class="fragment fade-in" style="color: #cc2222">GREEN</h3>
+
+** Error handling
+*** Use a dedicated error handling model
+    #+ATTR_REVEAL: :frag fade-in
+    - exceptions
+    - special return values
+    - error state
+    
+*** Whatever error model you choose
+    #+ATTR_REVEAL: :frag fade-in
+    - document
+    - be consistent
+    - it's part of the API
+* Blush time 
+** Short sighted interface design in the wild
+   #+ATTR_REVEAL: fade-in
+*** Staring... my code
+*** Guest appearance by other people's code
+** Too many knobs
+   :PROPERTIES: 
+  :reveal_background: too-many-knobs.jpg
+  :reveal_background_trans: fade
+  :END:
+   #+ATTR_REVEAL: :frag fade-in
+   Liberator knobs
+   [[file:liberator-knobs.png]] _
+   #+BEGIN_NOTES
+   You must guide your users
+   #+END_NOTES
+*** Not so many docstrings...
+   [[file:liberator-no-docs.png]] _
+*** Phantom bugs!
+    :PROPERTIES: 
+    :reveal_data_transition: none
+    :END:
+    #+BEGIN_SRC clojure
+    (defresource frobnicator [db id]
+      :exists           (fn [ctx] {::frob (load-from-db db id)})
+      :e-tag            (fn [{frob ::frob}] (:_version frob))
+      :handle-not-found (fn [ctx] (format "Frob not found with id %s" id))
+      :handle-ok        (fn [{frob ::frob} frob]))
+    #+END_SRC
+*** Phantom bugs!
+    :PROPERTIES: 
+    :reveal_data_transition: none
+    :END:
+
+    #+BEGIN_SRC clojure
+    (defresource frobnicator [db id]
+      :exists?          (fn [ctx] {::frob (load-from-db db id)})
+      :e-tag            (fn [{frob ::frob}] (:_version frob))
+      :handle-not-found (fn [ctx] (format "Frob not found with id %s" id))
+      :handle-ok        (fn [{frob ::frob} frob]))
+    #+END_SRC
+** Incomposability
+** Lego composes
+  :PROPERTIES: 
+  :reveal_background: lego.gif
+  :reveal_background_trans: fade
+  :END:
+** Variadic map arguments
+    #+ATTR_REVEAL: :frag fade-in
+    ...do not compose too well
+    #+ATTR_REVEAL: :frag fade-in
+    #+BEGIN_SRC clojure
+    (defn load-entity [db & {:as opts}] ...)
+    #+END_SRC
+
+    #+ATTR_REVEAL: :frag fade-in
+    #+BEGIN_SRC clojure
+    (def default-opts {:eager true :keywordize false :fetch-depth 5})
+    #+END_SRC
+
+    #+ATTR_REVEAL: :frag fade-in
+    #+BEGIN_SRC clojure
+    (defn load-customer [db id]
+      (apply load-entity db (merge default-ops :query {:id id}))
+    #+END_SRC
+
+    #+ATTR_REVEAL: :frag fade-in
+    #+BEGIN_SRC text
+    ;; => IllegalArgumentException No value supplied for key: [:fetch-depth 5]  clojure.lang.PersistentHashMap.create (PersistentHashMap.java:77)
+    #+END_SRC
+
+    #+ATTR_REVEAL: :frag fade-in
+    #+BEGIN_SRC clojure
+    (apply load-entity my-db (apply concat (merge default-ops :query {:id id}))
+    #+END_SRC
+*** Apply concat apply function?
+    #+ATTR_REVEAL: :frag fade-in
+    #+BEGIN_SRC clojure
+    (->> some-opts (apply concat) (apply load-entitiy))
+    #+END_SRC
+
+    #+ATTR_REVEAL: :frag fade-in
+    [[file:kidding.png]] _
+
+** Macros
+   :PROPERTIES: 
+   :reveal_background: trapdoor.jpg
+   :reveal_background_trans: slide
+   :END:
+*** Once you're in macro-land you need stay in macro-land
+    :PROPERTIES: 
+    :reveal_background: trapdoor.jpg
+    :reveal_background_trans: slide
+    :END:
+*** macro-apply anyone?
+     #+ATTR_REVEAL: :frag fade-in
+     #+BEGIN_SRC clojure
+(defresource foo :handle-ok "ok")
+     #+END_SRC
+     #+ATTR_REVEAL: :frag fade-in
+     #+BEGIN_SRC clojure
+(def defaults {:exists? (fn [_] (zero? (rand-int 1)))})
+     #+END_SRC
+     #+ATTR_REVEAL: :frag fade-in
+     #+BEGIN_SRC clojure
+(apply defresource bar (merge defaults {:handle-ok "ok"}))
+     #+END_SRC
+     #+ATTR_REVEAL: :frag fade-in
+     #+BEGIN_SRC clojure
+;; => CompilerException java.lang.RuntimeException: Can't take value of a macro: #'liberator.core/defresource, compiling:(/private/var/folders/p1/47jm9vq12g93ry9vf525h7vh0000gn/T/form-init2406362871536982238.clj:1:1) 
+     #+END_SRC
+*** prevents reuse & promotes code duplication
+*** liberator had to extend the api
+    #+ATTR_REVEAL: :frag fade-in
+    find backward compatible way
+    #+ATTR_REVEAL: :frag fade-in
+    optional map as first argument
+    #+ATTR_REVEAL: :frag fade-in
+    #+BEGIN_SRC clojure
+    (defresource bar defaults {:handle-ok "ok"})
+    #+END_SRC
+    #+ATTR_REVEAL: :frag fade-in
+    better stay away from macros
+    #+ATTR_REVEAL: :frag fade-in
+    #+BEGIN_SRC clojure
+    (def bar (resource defaults :handle-ok "ok"))
+    #+END_SRC
+    #+ATTR_REVEAL: :frag fade-in
+    #+BEGIN_SRC clojure
+    (def bar (resource (merge defaults {:handle-ok "ok"}))
+    #+END_SRC
+** Incomplete API
+*** Unhandled edge cases...
+*** ...lead to workarounds
+     #+ATTR_REVEAL: :frag fade-in
+     #+BEGIN_SRC clojure
+(fn [ctx]
+ (ring-response "response-body" {:headers {"X-Foo" "bar"}))))
+     #+END_SRC
+
+     #+ATTR_REVEAL: :frag fade-in
+     But this is what you need to do
+
+     #+ATTR_REVEAL: :frag fade-in
+     #+BEGIN_SRC clojure
+(fn [ctx]
+ ;; workaround until issue #152 is fixed
+ (-> "response-body"
+     (as-response (assoc-in ctx [:representation :media-type] "text/plain"))
+     (assoc-in [:headers "X-Foo"] "bar")
+     (ring-response))))
+     #+END_SRC
+*** Clojure users expect nil punning
+    #+ATTR_REVEAL: :frag fade-in
+    #+BEGIN_SRC clojure
+(defn print-my-stuff [stuff]
+  (println (str "Stuff: " (.toString stuff))
+     #+END_SRC
+
+    #+ATTR_REVEAL: :frag fade-in
+    #+BEGIN_SRC text
+    ;; => NullPointerException   clojure.lang.Reflector.invokeNoArgInstanceMember (Reflector.java:301)
+    #+END_SRC
+
+    #+ATTR_REVEAL: :frag fade-in
+    Reflector.java?
+
+*** Missing error handling
+    #+ATTR_REVEAL: :frag fade-in
+    #+BEGIN_SRC text
+    500 INTERNAL SERVER ERROR
+    #+END_SRC
+    #+ATTR_REVEAL: :frag fade-in
+    #+BEGIN_SRC clojure
+    ;; since 0.12.0
+    (defresource foo
+      :handle-exception (fn [{e :exception :as context}]
+                          ...) ;; hurray
+      ...)
+    #+END_SRC
+** State
+   #+ATTR_REVEAL: :frag fade-in
+   State
+
+   #+ATTR_REVEAL: :frag fade-in
+   State?
+
+   #+ATTR_REVEAL: :frag fade-in
+   State!
+   #+BEGIN_NOTES
+   State is part of the API
+   #+END_NOTES
+*** My God, it's full of atoms
+   :PROPERTIES: 
+   :reveal_background: full-of-stars.jpg
+   :END:
+   #+ATTR_REVEAL: :frag fade-in
+   #+BEGIN_SRC clojure
+  (def system-state (atom {})
+  #+END_SRC
+   #+ATTR_REVEAL: :frag fade-in
+   #+BEGIN_SRC clojure
+   (def another-state (atom {})
+  #+END_SRC
+   #+ATTR_REVEAL: :frag fade-in
+   #+BEGIN_SRC clojure
+   (def auxiliary-state (atom {})
+  #+END_SRC
+   #+ATTR_REVEAL: :frag fade-in
+   #+BEGIN_SRC clojure
+   (def state-manager-state (atom {})
+  #+END_SRC
+   #+ATTR_REVEAL: :frag fade-in
+   #+BEGIN_SRC clojure
+   (def yetanother-state (atom {})
+   #+END_SRC
+*** Problems with too many atoms
+    #+ATTR_REVEAL: :frag fade-in
+    - No coordination between atoms
+    - Functions no longer referentially transparent
+    - Functions expect "initialization"
+*** Use Explicit arguments
+*** Use single atom to hold all the system state
+*** Pass the value, not the atom to functions
+*** Example
+     #+ATTR_REVEAL: :frag fade-in
+     #+BEGIN_SRC clojure
+     (def state (atom {:system-state {}
+                       :another-state {}
+                       :auxiliary-state {}
+                       :yetanother-state {}})
+     #+END_SRC
+     #+ATTR_REVEAL: :frag fade-in
+     *-in is your friend
+     #+ATTR_REVEAL: :frag fade-in
+     #+BEGIN_SRC clojure
+     (defn start-ingest [state file]
+       (start-ingest-in-background file)
+       (assoc-in state [:system-state :ingest :status] :running))
+
+     (swap! state start-ingest file)
+     #+END_SRC
+     
+     #+ATTR_REVEAL: :frag fade-in
+     - Easier to test
+     - Can use multiple instances
+     
+*** Or use dynamic binding
+     #+ATTR_REVEAL: :frag fade-in
+     #+BEGIN_SRC clojure
+     (def ^:dynamic db)
+     
+     (with-db (connect some-url)
+       (fetch-from-db some-db))
+     #+END_SRC
+*** Nice to avoid endless passing of handles
+     #+ATTR_REVEAL: :frag fade-in
+     #+BEGIN_SRC clojure
+     (defn exec [db query] ...)
+     (defn fetch [db entity id]
+       (exec db (build-query entity id)))
+     (defn load-user [db id]
+       (fetch db :user id))
+     (defn authorized? [db id role]
+       (let [user (load-user db id)]
+         ...))
+     #+END_SRC
+*** But what if you want to connect to more than one db?
+    #+BEGIN_NOTES
+    You cannot bind a dynamic var to two values
+    #+END_NOTES
+* Fixing it
+    #+BEGIN_NOTES
+    I want to talk about fixing all this on a more general level
+    #+END_NOTES
+** Out of band documentation
+    #+BEGIN_NOTES
+    Not function docstrings
+    #+END_NOTES
+*** Explain the design motivation
+*** Explain the model and abstractions
+*** TODO Liberator uses the ring interface
+   #+ATTR_REVEAL: :frag fade-in
+   #+BEGIN_SRC clojure
+   ;; request
+   {:request-method :get :headers {...}}
+   #+END_SRC
+
+   #+ATTR_REVEAL: :frag fade-in
+   #+BEGIN_SRC clojure
+   ;; response
+   {:status 418 :body "I'm a teapot" :headers {...}}
+   #+END_SRC
+
+   #+ATTR_REVEAL: :frag fade-in
+   #+BEGIN_SRC clojure
+   ;; request handler
+   (fn [req]
+     {:status 418 :body "I'm a teapot" :headers {...}})
+   #+END_SRC
+*** Liberator holds state in the context 
+   #+ATTR_REVEAL: :frag fade-in
+   #+BEGIN_SRC clojure
+   ;; this is passed as the context
+   {:status ...
+    :request ...
+    :representation ...
+    :resource ...
+    :whatever-you-want ...}
+   #+END_SRC
+
+   #+ATTR_REVEAL: :frag fade-in
+   #+BEGIN_SRC clojure
+   ;; every decision function
+   (fn [ctx]
+     (do-something)
+     {:foo "some value"} ;; context update
+
+   ;; context is going to be "merged" with context update
+   #+END_SRC
+*** This is actually documented!
+   :PROPERTIES: 
+   :reveal_background: context-doc.png
+   :reveal_background_trans: fade
+   :reveal_background_size: contain
+   :END:
+   #+ATTR_REVEAL: :frag fade-in
+   (Insert applause jingle here)
+*** Liberator provides a high level view on what's going on
+   #+ATTR_REVEAL: :frag fade-in
+   [[file:decision-graph.png]] _
+
+*** Protocols
+    #+ATTR_REVEAL: :frag fade-in
+    #+BEGIN_SRC clojure
+    (defprotocol Resource
+      (exists? [ctx] "returns true when the resource currently exists")
+      (existed? [ctx] "returns true when the resoues previosly existed")
+      (handle-ok [ctx] "returns the representation of resource entity")
+      ...)
+    #+END_SRC
+
+*** Microprotocols
+    #+ATTR_REVEAL: :frag fade-in
+    Yada
+    #+ATTR_REVEAL: :frag fade-in
+    #+BEGIN_SRC clojure
+    (defrecord StringResource [s last-modified]
+      Representations
+      (representations [_]
+        [{:media-type "text/plain" :charset platform-charsets}])
+
+      ResourceModification
+      (last-modified [_ _] last-modified)
+
+      ResourceVersion
+      (version [_ _] s)
+
+      Get
+      (GET [_ _] s))
+    #+END_SRC
+    #+ATTR_REVEAL: :frag fade-in
+    om-next does this
+
+* Wrapping it up
+** API Design is about the users
+** Plan ahead
+** Find the right abstraction
+** con•ven•ience (kən-vēnˈyəns)
+*** or expressiveness?
+** Forget everything
+*** take the user's perspective
+*** assume nothing
+*** how far do you get by only reading docstring
+    #+BEGIN_NOTES
+    nice experiment
+    take the users perspective
+    #+END_NOTES
+** Observe the users
+*** How are they using your library
+*** Search on github
+*** Ask for context and motivation on bug reports
+    #+BEGIN_NOTES
+    WORKSASDESIGNED - learn why a use wants this
+    #+END_NOTES
+* Thank you!
+* Final words 
+** Talk is licensed [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0)]
+** Attribution of pictures
+    #+BEGIN_SRC text
+      Trapdoor: English Lock at en.wikipedia [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0)], from Wikimedia
+      Commons https://upload.wikimedia.org/wikipedia/commons/f/fb/Trapdoor.jpg
+    #+END_SRC

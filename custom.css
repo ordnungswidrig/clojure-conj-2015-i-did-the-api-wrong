@@ -1,0 +1,43 @@
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
+
+.reveal section img, .reveal section pre {
+    border: none;
+    box-shadow: none;
+}
+
+.reveal {
+  font-family: "Lato", sans-serif;
+  font-size: 36px;
+  font-weight: normal;
+  line-height: 1.5em;
+  x-letter-spacing: -0.02em;
+  text-shadow: 0px 0px 6px rgba(255, 255, 255, 0.5);
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6,
+.reveal li {
+  margin: 0 0 20px 0;
+  font-family: "Lato", sans-serif;
+  line-height: 1.5em;
+  text-shadow: 0px 0px 6px rgba(255, 255, 255, 0.5);
+}
+
+
+#sec-4-2 h1,
+#sec-4-2 h2,
+#sec-4-2 h3,
+#sec-4-2 h4,
+#sec-4-2 p
+{
+  color: #fff;
+  text-shadow: 0px 0px 6px rgba(0,0,0,0.5);
+}
+
+.reveal ul {
+    list-style-type: none;
+}
